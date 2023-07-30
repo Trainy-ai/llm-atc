@@ -1,0 +1,2 @@
+# ignore pip install -e build packages
+llm_atc/__pycache__/*
