@@ -6,7 +6,7 @@
 [![](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/TrainyAI)
 [![](https://dcbadge.vercel.app/api/server/d67CMuKY5V)](https://discord.gg/d67CMuKY5V)
 
-LLM-ATC (**A**ir **T**raffic **C**ontroller) is a CLI for fine tuning and serving open source models using your own cloud credentials. We hope that this project can lower the cognitive overhead orchestration for fine tuning and model serving.
+LLM-ATC (**A**ir **T**raffic **C**ontroller) is a CLI for fine tuning and serving open source models using your own cloud credentials. We hope that this project can lower the cognitive overhead of orchestration for fine tuning and model serving.
 
 ## Installation
 
