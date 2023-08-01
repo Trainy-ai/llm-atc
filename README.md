@@ -15,6 +15,7 @@ Follow the instructions here [to install Skypilot and provide cloud credentials]
 ```
 # create a fresh environment
 conda create -n "llm-atc" python=3.10
+conda activate sky
 
 # For Macs, macOS >= 10.15 is required to install SkyPilot. For Apple Silicon-based devices (e.g. Apple M1)
 pip uninstall grpcio; conda install -c conda-forge grpcio=1.43.0
