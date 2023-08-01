@@ -1,2 +1,3 @@
 # ignore pip install -e build packages
 llm_atc/__pycache__/*
+dist/*

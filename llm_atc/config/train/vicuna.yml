@@ -10,7 +10,7 @@ file_mounts:
     name: llm-atc
     mode: MOUNT
     
-  /data/mydata.json: ./dummy.json
+  /data/mydata.json: ./vicuna_test.json
 
 workdir: .
 
@@ -42,6 +42,9 @@ setup: |
     pip install flash-attn --no-build-isolation
   fi
 
+  sudo apt update
+  sudo apt install -y rclone
+
 run: |
   cd FastChat
   conda activate chatbot
@@ -65,7 +68,7 @@ run: |
   mkdir -p $CKPT_PATH
   last_ckpt=$(ls ${CKPT_PATH} | grep -E '[0-9]+' | sort -t'-' -k1,1 -k2,2n | tail -1)
   mkdir -p ~/.checkpoints/${last_ckpt}
-  rsync ${CKPT_PATH}/${last_ckpt}/ ~/.checkpoints/${last_ckpt}
+  rclone copyto --progress ${CKPT_PATH}/${last_ckpt}/ ~/.checkpoints/${last_ckpt}
   
   # Turn off wandb if no api key is provided
   if [ "$WANDB_API_KEY" == "" ]; then
@@ -106,7 +109,7 @@ run: |
 
   returncode=$?
   # Sync any files not in the checkpoint-* folders
-  rsync -r $LOCAL_CKPT_PATH/ $CKPT_PATH/
+  rclone sync --progress $LOCAL_CKPT_PATH/ $CKPT_PATH/
   exit $returncode
 
 

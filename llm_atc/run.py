@@ -7,21 +7,27 @@ import yaml
 
 from datetime import datetime
 from omegaconf import OmegaConf
-from typing import Optional
+from prettytable import PrettyTable
+from typing import Dict, Optional
 
 RUN_LOG_PATH = os.path.abspath(
     os.path.join(llm_atc.constants.LLM_ATC_PATH, "runs.yaml")
 )
 
+
 def str_presenter(dumper, data):
     """configures yaml for dumping multiline strings
-    Ref: https://stackoverflow.com/questions/8640959/how-can-i-control-what-scalar-form-pyyaml-uses-for-my-data"""
-    if data.count('\n') > 0:  # check for multiline string
-        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
-    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+    Ref: https://stackoverflow.com/questions/8640959/how-can-i-control-what-scalar-form-pyyaml-uses-for-my-data
+    """
+    if data.count("\n") > 0:  # check for multiline string
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+
 
 yaml.add_representer(str, str_presenter)
-yaml.representer.SafeRepresenter.add_representer(str, str_presenter) # to use with safe_dum
+yaml.representer.SafeRepresenter.add_representer(
+    str, str_presenter
+)  # to use with safe_dum
 
 
 class RunTracker:
@@ -30,30 +36,35 @@ class RunTracker:
     locally
     """
 
-    def __init__(self):
-        if not os.path.exists(RUN_LOG_PATH):
-            logging.info(
-                f"no previous runs in existence. Creating new run log at {llm_atc.constants.LLM_ATC_PATH}"
-            )
-            self.run_log = OmegaConf.create({})
-        else:
-            with open(RUN_LOG_PATH, "r") as f:
-                self.run_log = OmegaConf.load(RUN_LOG_PATH)
+    if not os.path.exists(RUN_LOG_PATH):
+        logging.info(f"no previous runs in existence")
+        run_log = OmegaConf.create({})
+    else:
+        with open(RUN_LOG_PATH, "r") as f:
+            run_log = OmegaConf.load(RUN_LOG_PATH)
 
-    def run_exists(self, name: str) -> bool:
+    @classmethod
+    def run_exists(cls, name: str) -> bool:
         """
         Checks if run with `name` already exists
 
         Args:
             name (str): name of run to test against
         """
-        return name in self.run_log
+        return name in cls.run_log
 
-    def save(self):
+    @classmethod
+    def get_run_metadata(cls, name: str) -> Dict:
+        return cls.run_log[name]
+
+    @classmethod
+    def save(cls):
+        logging.info(f"updating run log")
         with open(RUN_LOG_PATH, "w") as f:
-            OmegaConf.save(self.run_log, f=RUN_LOG_PATH)
+            OmegaConf.save(cls.run_log, f=RUN_LOG_PATH)
 
-    def add_run(self, model_type: str, name: str, description: str, task: sky.Task):
+    @classmethod
+    def add_run(cls, model_type: str, name: str, description: str, task: sky.Task):
         """add run to run logger
 
         Args:
@@ -65,19 +76,48 @@ class RunTracker:
         Raises:
             ValueError: _description_
         """
-        task_yaml_path = os.path.join(llm_atc.constants.LLM_ATC_PATH, name)
+        task_yaml_path = os.path.join(llm_atc.constants.LLM_ATC_PATH, name) + ".yml"
         with open(task_yaml_path, "w") as f:
             yaml.dump(task.to_yaml_config(), f)
-        self.run_log[name] = {
+        cls.run_log[name] = {
             "description": description,
-            "time": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+            "time": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
             "model_type": model_type,
             "task": task_yaml_path,
         }
-        with open(RUN_LOG_PATH, 'w') as f:
-            OmegaConf.save(self.run_log, RUN_LOG_PATH)
+        cls.save()
 
+    @classmethod
     def list(
-        self, limit: Optional[int], model_type: Optional[str], name: Optional[str]
+        cls, model_type: Optional[str], name: Optional[str], limit: Optional[int] = 10
     ):
-        pass
+        sorted_runs = {
+            k: v for k, v in sorted(cls.run_log.items(), key=lambda x: x[1]["time"])
+        }
+        count, limit = 0, min(len(sorted_runs), limit)
+        prettytable = PrettyTable()
+        prettytable.field_names = [
+            "model_name",
+            "model_type",
+            "time",
+            "task",
+            "description",
+        ]
+        for model_name, metadata in sorted_runs.items():
+            if (model_type and model_type != metadata["model_type"]) or (
+                name and not name in model_name
+            ):
+                continue
+            prettytable.add_row(
+                [
+                    model_name,
+                    metadata["model_type"],
+                    metadata["time"],
+                    metadata["task"],
+                    metadata["description"],
+                ]
+            )
+            count += 1
+            if count >= limit:
+                break
+        print(prettytable)
