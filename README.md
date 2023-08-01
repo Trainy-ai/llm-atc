@@ -61,9 +61,9 @@ When training completes, by default, your model, will be saved to an object stor
 
 ```
 # s3 location
-s3://llm-atc/vicuna_test
+s3://llm-atc/myvicuna
 # gcp location
-g3://llm-atc/vicuna_test
+g3://llm-atc/myvicuna
 ```
 
 ## Serving
