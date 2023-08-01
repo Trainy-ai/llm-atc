@@ -16,7 +16,7 @@ Follow the instructions here (to install Skypilot and provide cloud credentials)
 # create a fresh environment
 conda create -n "llm-atc" python=3.10
 
-# For Macs, macOS >= 10.15 is required to install SkyPilot. Apple Silicon-based devices (e.g. Apple M1)
+# For Macs, macOS >= 10.15 is required to install SkyPilot. For Apple Silicon-based devices (e.g. Apple M1)
 pip uninstall grpcio; conda install -c conda-forge grpcio=1.43.0
 
 # install the skypilot cli and dependency, for the clouds you want, e.g. GCP
@@ -67,11 +67,24 @@ g3://llm-atc/vicuna_test
 
 ## Serving
 
-`llm-atc` can serve both models from HuggingFace or that you've trained through `llm-atc` 
+`llm-atc` can serve both models from HuggingFace or that you've trained through `llm-atc serve`. For example
+
+```
+# serve an llm-atc finetuned model, requires `llm-atc/` prefix and grabs model checkpoint from object store
+llm-atc serve --name llm-atc/myvicuna --accelerator A100:1 -c serveCluster --cloud gcp --region asia-southeast1
+
+# serve a HuggingFace model, e.g. `lmsys/vicuna-13b-v1.3`
+llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c serveCluster --cloud gcp --region asia-southeast1
+```
+
+This creates a OpenAI API server on port 8000 on the cluster head and one model worker.
+Forward this port to your laptop with `ssh -L 8000:localhost:8000 serveCluster` and you can connect to this server and
+develop your using your finetuned models with your favorite LLM frameworks like (LangChain)[https://python.langchain.com/docs/get_started/introduction.html]. An example of how integrate Langchain (through Fastchat) is linked (here)[https://github.com/lm-sys/FastChat/blob/main/docs/langchain_integration.md]. **Example with ATC coming soon**
+
 
 ## How does it work?
 
-Training, serving, and orchestration are powered by [SkyPilot](https://github.com/skypilot-org/skypilot) and [FastChat](https://github.com/lm-sys/FastChat/). We've made this decision since we believe this will allow people to train and deploy custom LLMs without cloud-lockin.
+Training, serving, and orchestration are powered by [SkyPilot](https://github.com/skypilot-org/skypilot), [FastChat](https://github.com/lm-sys/FastChat/), and (vLLM)[https://github.com/vllm-project/vllm]. We've made this decision since we believe this will allow people to train and deploy custom LLMs without cloud-lockin.
 
 We currently rely on default hyperparameters from other training code repositories, but we will add options to overwrite these so that users have more control over training, but for now, we think the defaults should suffice for most use cases. 
 
