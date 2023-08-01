@@ -81,7 +81,11 @@ llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c serveCluster 
 This creates a OpenAI API server on port 8000 on the cluster head and one model worker.
 Forward this port to your laptop with 
 ```
+# Forward port 8000 to your localhost
 ssh -N -L 8000:localhost:8000 serveCluster
+
+# test which models are available
+curl http://localhost:8000/v1/models
 ```
 and you can connect to this server and
 develop your using your finetuned models with your favorite LLM frameworks like [LangChain](https://python.langchain.com/docs/get_started/introduction.html). An example of how integrate Langchain (through Fastchat) is linked [here](https://github.com/lm-sys/FastChat/blob/main/docs/langchain_integration.md). **Example with ATC coming soon**
