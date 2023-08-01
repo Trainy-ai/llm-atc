@@ -10,7 +10,7 @@ LLM-ATC (**A**ir **T**raffic **C**ontroller) is a CLI for fine tuning and servin
 
 ## Installation
 
-Follow the instructions here (to install Skypilot and provide cloud credentials)[https://skypilot.readthedocs.io/en/latest/getting-started/installation.html]. We use Skypilot for cloud orchestration. Steps to create an environment from source is shown below.
+Follow the instructions here [to install Skypilot and provide cloud credentials](https://skypilot.readthedocs.io/en/latest/getting-started/installation.html). We use Skypilot for cloud orchestration. Steps to setup an environment is shown below.
 
 ```
 # create a fresh environment
@@ -79,12 +79,12 @@ llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c serveCluster 
 
 This creates a OpenAI API server on port 8000 on the cluster head and one model worker.
 Forward this port to your laptop with `ssh -L 8000:localhost:8000 serveCluster` and you can connect to this server and
-develop your using your finetuned models with your favorite LLM frameworks like (LangChain)[https://python.langchain.com/docs/get_started/introduction.html]. An example of how integrate Langchain (through Fastchat) is linked (here)[https://github.com/lm-sys/FastChat/blob/main/docs/langchain_integration.md]. **Example with ATC coming soon**
+develop your using your finetuned models with your favorite LLM frameworks like [LangChain](https://python.langchain.com/docs/get_started/introduction.html). An example of how integrate Langchain (through Fastchat) is linked [here](https://github.com/lm-sys/FastChat/blob/main/docs/langchain_integration.md). **Example with ATC coming soon**
 
 
 ## How does it work?
 
-Training, serving, and orchestration are powered by [SkyPilot](https://github.com/skypilot-org/skypilot), [FastChat](https://github.com/lm-sys/FastChat/), and (vLLM)[https://github.com/vllm-project/vllm]. We've made this decision since we believe this will allow people to train and deploy custom LLMs without cloud-lockin.
+Training, serving, and orchestration are powered by [SkyPilot](https://github.com/skypilot-org/skypilot), [FastChat](https://github.com/lm-sys/FastChat/), and [vLLM](https://github.com/vllm-project/vllm). We've made this decision since we believe this will allow people to train and deploy custom LLMs without cloud-lockin.
 
 We currently rely on default hyperparameters from other training code repositories, but we will add options to overwrite these so that users have more control over training, but for now, we think the defaults should suffice for most use cases. 
 
