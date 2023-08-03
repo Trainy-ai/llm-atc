@@ -6,7 +6,6 @@ import sys
 
 from llm_atc.launch import SUPPORTED_MODELS
 from llm_atc.run import RunTracker
-from sky.data.storage import StoreType, get_store_prefix
 from typing import Any, Dict, List, Optional, Union
 
 

@@ -1,7 +1,6 @@
 resources:
   accelerators: A100:1
   disk_size: 1024
-  disk_tier: high
 
 file_mounts:
   /llm-atc:
@@ -19,6 +18,7 @@ setup: |
   pip install vllm
   pip install git+https://github.com/lm-sys/FastChat.git
   pip install --upgrade openai
+  pip install ray==2.5.1
   sudo apt update
   sudo apt install -y rclone
 
