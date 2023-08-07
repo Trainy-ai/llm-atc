@@ -2,10 +2,9 @@ import llm_atc.constants
 import logging
 import os
 import sky
-import yaml
 
 from omegaconf import OmegaConf
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 
 SUPPORTED_MODELS = ("vicuna",)
@@ -24,13 +23,12 @@ def train_task(model_type: str, **launcher_kwargs) -> sky.Task:
     Returns:
         sky.Task representing the task that was just launched.
     """
-    match model_type:
-        case "vicuna":
-            return VicunaLauncher(**launcher_kwargs).launch()
-        case _:
-            raise ValueError(
-                f"model type = {model_type}. Available models = {SUPPORTED_MODELS}"
-            )
+    if model_type == "vicuna":
+        return VicunaLauncher(**launcher_kwargs).launch()
+    else:
+        raise ValueError(
+            f"model type = {model_type}. Available models = {SUPPORTED_MODELS}"
+        )
 
 
 class Launcher:
@@ -41,16 +39,20 @@ class Launcher:
     def __init__(
         self,
         finetune_data: str,
-        name: Optional[str],
-        cloud: Optional[str],
-        accelerator: Optional[str],
-        envs: Optional[Dict],
+        name: Optional[str] = None,
+        cloud: Optional[str] = None,
+        accelerator: Optional[str] = None,
+        envs: Optional[str] = "",
     ):
-        self.finetune_data = finetune_data
-        self.name = name
-        self.cloud = cloud
-        self.accelerator = accelerator
-        self.envs = OmegaConf.to_container(OmegaConf.from_dotlist(envs.split()))
+        self.finetune_data: str = finetune_data
+        self.name: Optional[str] = name
+        self.cloud: Optional[str] = cloud
+        self.accelerator: Optional[str] = accelerator
+        self.envs: Dict[Any, Any] = (
+            OmegaConf.to_container(OmegaConf.from_dotlist(envs.split()), resolve=True)
+            if envs
+            else {}
+        )
 
 
 class VicunaLauncher(Launcher):
@@ -69,12 +71,16 @@ class VicunaLauncher(Launcher):
         task = self.default_task
         task.name = self.name
         self.envs["MODEL_NAME"] = self.name
-        if not "MODEL_SIZE" in self.envs:
+        if "MODEL_SIZE" not in self.envs:
             logging.warning(
                 f"envs.MODEL_SIZE not set, defaulting to {task.envs['MODEL_SIZE']}"
             )
-        if not "WANDB_API_KEY" in self.envs:
+        if "WANDB_API_KEY" not in self.envs:
             logging.warning(f"envs.WANDB_API_KEY not set, skipping WandB logging")
+        if "HF_TOKEN" not in self.envs:
+            logging.warning(
+                "No huggingface token provided. You will not be able to finetune starting from private or gated models"
+            )
         task.update_envs(self.envs)
         task.update_file_mounts({"/data/mydata.json": self.finetune_data})
         resource = list(task.get_resources())[0]

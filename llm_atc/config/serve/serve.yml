@@ -19,8 +19,22 @@ setup: |
   pip install git+https://github.com/lm-sys/FastChat.git
   pip install --upgrade openai
   pip install ray==2.5.1
+  if [[ "$HF_TOKEN" != "" ]];
+  then
+    pip install --upgrade huggingface_hub
+    python -c "import huggingface_hub; huggingface_hub.login('${HF_TOKEN}')"
+  fi
+
   sudo apt update
   sudo apt install -y rclone
+  # copy files from object store onto disk
+  if [[ $MODEL_NAME == llm-atc/* ]];
+  then
+    CHECKPOINT="/$MODEL_NAME/"
+    LOCAL_CHKPT="./$MODEL_NAME/"
+    mkdir -p $LOCAL_CHKPT
+    rclone sync --progress --exclude "train*" $CHECKPOINT $LOCAL_CHKPT
+  fi
 
 
 run: |
@@ -32,15 +46,6 @@ run: |
 
   echo "The ip address of this machine is ${this_addr}"
   echo "The head address is ${master_addr}"
-
-  # copy files from object store onto disk
-  if [[ $MODEL_NAME == llm-atc/* ]];
-  then
-    CHECKPOINT="/$MODEL_NAME/"
-    LOCAL_CHKPT="./$MODEL_NAME/"
-    mkdir -p $LOCAL_CHKPT
-    rclone sync --progress --exclude "train*" $CHECKPOINT $LOCAL_CHKPT
-  fi
 
   conda activate chatbot  
 
@@ -67,3 +72,4 @@ run: |
 
 envs:
   MODELS_LIST: lmsys/vicuna-7b-v1.3
+  HF_TOKEN: ""

@@ -20,7 +20,6 @@ import click
 import hashlib
 import sky
 import socket
-import string
 
 hostname = socket.gethostname()
 
@@ -57,7 +56,9 @@ def cli():
     help="local/cloud URI to finetuning data. (e.g ~/mychat.json, s3://my_bucket/my_chat.json",
 )
 @click.option("-n", "--name", type=str, help="Name of this model run.", required=True)
-@click.option("--description", type=str, help="description of this model run")
+@click.option(
+    "--description", type=str, default="", help="description of this model run"
+)
 @click.option(
     "-c",
     "--cluster",
@@ -94,8 +95,8 @@ def cli():
 def train(
     model_type: str,
     finetune_data: str,
-    name: Optional[str],
-    description: Optional[str],
+    name: str,
+    description: str,
     cluster: Optional[str],
     cloud: Optional[str],
     envs: Optional[str],
@@ -142,6 +143,11 @@ def train(
     multiple=True,
 )
 @click.option(
+    "-e",
+    "--envs",
+    help="environment variables for this serve deployment. i.e. `HF_TOKEN='<huggingface_token>'`",
+)
+@click.option(
     "--accelerator",
     type=str,
     help="Which gpu instance to use for serving",
@@ -161,14 +167,32 @@ def train(
 @click.option(
     "--no_setup", is_flag=True, show_default=True, default=False, help="skip setup step"
 )
+@click.option(
+    "--detach_setup",
+    is_flag=True,
+    show_default=True,
+    default=False,
+    help="Don't connect to this session",
+)
+@click.option(
+    "--detach_run",
+    "-d",
+    is_flag=True,
+    show_default=True,
+    default=False,
+    help="Don't connect to this session",
+)
 def serve(
     name: List[str],
     accelerator: Optional[str],
+    envs: Optional[str],
     cluster: Optional[str],
     cloud: Optional[str],
     region: Optional[str],
     zone: Optional[str],
     no_setup: Optional[bool],
+    detach_setup: Optional[bool],
+    detach_run: Optional[bool],
 ):
     """Create a cluster to serve an openAI.api_server using FastChat and vLLM"""
     posthog.capture(
@@ -176,14 +200,20 @@ def serve(
         event="serving launched",
         timestamp=datetime.utcnow(),
     )
-    serve_route(
+    serve_task = serve_route(
         name,
         accelerator=accelerator,
-        cluster=cluster,
+        envs=envs,
         cloud=cloud,
         region=region,
         zone=zone,
+    )
+    sky.launch(
+        serve_task,
+        cluster_name=cluster,
         no_setup=no_setup,
+        detach_setup=detach_setup,
+        detach_run=detach_run,
     )
 
 
@@ -198,7 +228,7 @@ def serve(
 def list(
     model_type: Optional[str],
     name: Optional[str],
-    limit: Optional[int],
+    limit: int,
 ):
     """
     List models created by llm-atc. For models that are done, their status is permanently marked as available.

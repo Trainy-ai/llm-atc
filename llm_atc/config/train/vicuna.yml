@@ -74,6 +74,12 @@ run: |
   if [ "$WANDB_API_KEY" == "" ]; then
     export WANDB_MODE="offline"
   fi
+
+  if [[ "$HF_TOKEN" != "" ]];
+  then
+    pip install --upgrade huggingface_hub
+    huggingface-cli login --token $HF_TOKEN
+  fi
   
   torchrun \
     --nnodes=$NUM_NODES \
@@ -120,3 +126,4 @@ envs:
   USE_FLASH_ATTN: 0
   WANDB_API_KEY: ""
   MODEL_NAME: "vicuna_test"
+  HF_TOKEN: ""

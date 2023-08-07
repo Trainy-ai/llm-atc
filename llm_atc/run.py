@@ -1,4 +1,3 @@
-import json
 import llm_atc.constants
 import logging
 import os
@@ -37,11 +36,27 @@ class RunTracker:
     """
 
     if not os.path.exists(RUN_LOG_PATH):
-        logging.info(f"no previous runs in existence")
+        logging.info("no previous runs in existence")
         run_log = OmegaConf.create({})
     else:
         with open(RUN_LOG_PATH, "r") as f:
-            run_log = OmegaConf.load(RUN_LOG_PATH)
+            run_log = OmegaConf.load(RUN_LOG_PATH)  # type: ignore
+
+    @classmethod
+    def _delete(cls, name: str):
+        """Removes the run by its name. Internal only for tests
+
+        Args:
+            name (str): Run name to remove.
+
+        Raises:
+            ValueError: No finetuned model with the requested name
+        """
+        if cls.run_exists(name):
+            del cls.run_log[name]
+            cls.save()
+            return
+        raise ValueError(f"No model by the name of {name}")
 
     @classmethod
     def run_exists(cls, name: str) -> bool:
@@ -59,7 +74,7 @@ class RunTracker:
 
     @classmethod
     def save(cls):
-        logging.info(f"updating run log")
+        logging.info("updating run log")
         with open(RUN_LOG_PATH, "w") as f:
             OmegaConf.save(cls.run_log, f=RUN_LOG_PATH)
 
@@ -72,9 +87,6 @@ class RunTracker:
             name (str): user assigned name/id for this model
             description (str): a verbose user description for this trained model
             task (sky.Task): skypilot task specifiying this run.
-
-        Raises:
-            ValueError: _description_
         """
         task_yaml_path = os.path.join(llm_atc.constants.LLM_ATC_PATH, name) + ".yml"
         with open(task_yaml_path, "w") as f:
@@ -88,9 +100,7 @@ class RunTracker:
         cls.save()
 
     @classmethod
-    def list(
-        cls, model_type: Optional[str], name: Optional[str], limit: Optional[int] = 10
-    ):
+    def list(cls, model_type: Optional[str], name: Optional[str], limit: int = 10):
         sorted_runs = {
             k: v for k, v in sorted(cls.run_log.items(), key=lambda x: x[1]["time"])
         }
@@ -105,7 +115,7 @@ class RunTracker:
         ]
         for model_name, metadata in sorted_runs.items():
             if (model_type and model_type != metadata["model_type"]) or (
-                name and not name in model_name
+                name and name not in model_name
             ):
                 continue
             prettytable.add_row(

@@ -72,10 +72,10 @@ g3://llm-atc/myvicuna
 
 ```
 # serve an llm-atc finetuned model, requires `llm-atc/` prefix and grabs model checkpoint from object store
-llm-atc serve --name llm-atc/myvicuna --accelerator A100:1 -c serveCluster --cloud gcp --region asia-southeast1
+llm-atc serve --name llm-atc/myvicuna --accelerator A100:1 -c serveCluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
 
 # serve a HuggingFace model, e.g. `lmsys/vicuna-13b-v1.3`
-llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c serveCluster --cloud gcp --region asia-southeast1
+llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c serveCluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
 ```
 
 This creates a OpenAI API server on port 8000 on the cluster head and one model worker.
@@ -96,4 +96,3 @@ develop your using your finetuned models with your favorite LLM frameworks like 
 Training, serving, and orchestration are powered by [SkyPilot](https://github.com/skypilot-org/skypilot), [FastChat](https://github.com/lm-sys/FastChat/), and [vLLM](https://github.com/vllm-project/vllm). We've made this decision since we believe this will allow people to train and deploy custom LLMs without cloud-lockin.
 
 We currently rely on default hyperparameters from other training code repositories, but we will add options to overwrite these so that users have more control over training, but for now, we think the defaults should suffice for most use cases. 
-
