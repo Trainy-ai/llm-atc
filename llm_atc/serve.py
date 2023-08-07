@@ -5,7 +5,7 @@ import sky
 
 from llm_atc.run import RunTracker
 from omegaconf import OmegaConf
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 
 def serve_route(model_names: List[str], **serve_kwargs):
@@ -39,7 +39,11 @@ class Serve:
         self.names = names
         self.num_models = len(names)
         self.accelerator = accelerator
-        self.envs = OmegaConf.to_container(OmegaConf.from_dotlist(envs.split()))
+        self.envs: Dict[Any, Any] = (
+            OmegaConf.to_container(OmegaConf.from_dotlist(envs.split()), resolve=True)
+            if envs
+            else {}
+        )
         if (
             self.accelerator is None
             or "H100" not in self.accelerator
