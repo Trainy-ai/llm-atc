@@ -29,6 +29,9 @@ pip install google-api-python-client
 conda install -c conda-forge google-cloud-sdk
 gcloud init
 gcloud auth application-default login
+
+# double check that your credentials are properly set for your desired provider(s)
+sky check
 ```
 
 ### From PyPi
