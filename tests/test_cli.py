@@ -116,10 +116,10 @@ def test_train_vicuna():
     test = Test(
         "train_vicuna",
         [
-            f"llm-atc train --model_type vicuna --finetune_data {test_chat} --name myvicuna --description 'test case vicuna fine tune' -c mycluster --cloud gcp --envs 'MODEL_SIZE=7' --accelerator A100-80G:4",
+            f"llm-atc train --model_type vicuna --finetune_data {test_chat} --name {name} --description 'test case vicuna fine tune' -c mycluster --cloud gcp --envs 'MODEL_SIZE=7' --accelerator A100-80G:4",
             f"sky logs {name} 1 --status",
         ],
         f"sky down -y {name}",
     )
     run_one_test(test)
-    RunTracker._delete("trainvicuna")
+    RunTracker._delete(name)
