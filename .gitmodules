@@ -1,0 +1,3 @@
+[submodule "skypilot"]
+	path = skypilot
+	url = https://github.com/skypilot-org/skypilot.git
