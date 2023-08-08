@@ -100,7 +100,7 @@ def test_hf_serve():
         [
             f"llm-atc serve --detach_run --name lmsys/vicuna-7b-v1.3 --accelerator A100:1 -c {name} --cloud gcp --region asia-southeast1",
             "sleep 120",
-            f"ip=$(ssh -G {name}"
+            f"ip=$(ssh -G {name} | "
             + "awk '/^hostname / { print $2 }'); curl $ip:23924/v1/models",
         ],
         f"sky down -y {name}",
