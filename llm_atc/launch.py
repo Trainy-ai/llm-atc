@@ -41,12 +41,16 @@ class Launcher:
         finetune_data: str,
         name: Optional[str] = None,
         cloud: Optional[str] = None,
+        region: Optional[str] = None,
+        zone: Optional[str] = None,
         accelerator: Optional[str] = None,
         envs: Optional[str] = "",
     ):
         self.finetune_data: str = finetune_data
         self.name: Optional[str] = name
         self.cloud: Optional[str] = cloud
+        self.region: Optional[str] = region
+        self.zone: Optional[str] = zone
         self.accelerator: Optional[str] = accelerator
         self.envs: Dict[Any, Any] = (
             OmegaConf.to_container(OmegaConf.from_dotlist(envs.split()), resolve=True)
@@ -86,5 +90,6 @@ class VicunaLauncher(Launcher):
         resource = list(task.get_resources())[0]
         resource._set_accelerators(self.accelerator, None)
         resource._cloud = sky.clouds.CLOUD_REGISTRY.from_str(self.cloud)
+        resource._set_region_zone(self.region, self.zone)
         task.set_resources(resource)
         return task
