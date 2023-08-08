@@ -100,9 +100,8 @@ def test_hf_serve():
         [
             f"llm-atc serve --detach_run --name lmsys/vicuna-7b-v1.3 --accelerator A100:1 -c {name} --cloud gcp --region asia-southeast1",
             "sleep 120",
-            'ip=$(grep -A1 "Host '
-            + name
-            + '" ~/.ssh/config | grep "HostName" | awk \'{print $2}\'); curl $ip:8000/v1/models',
+            f"ip=$(ssh -G {name}"
+            + "awk '/^hostname / { print $2 }'); curl $ip:23924/v1/models",
         ],
         f"sky down -y {name}",
     )
@@ -123,3 +122,7 @@ def test_train_vicuna():
     )
     run_one_test(test)
     RunTracker._delete(name)
+
+
+if __name__ == "__main__":
+    test_hf_serve()
