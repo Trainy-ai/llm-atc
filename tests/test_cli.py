@@ -104,7 +104,7 @@ def test_hf_serve():
             + name
             + '" ~/.ssh/config | grep "HostName" | awk \'{print $2}\'); curl $ip:8000',
         ],
-        f"sky down --purge -y {name} ",
+        f"sky stop {name} && sky down --purge -y {name}",
         timeout=25 * 60,
     )
     run_one_test(test)
@@ -117,7 +117,7 @@ def test_train_vicuna():
         RunTracker._delete(name)
     except ValueError as e:
         pass
-    test_chat = os.path.join(os.path.dirname(__file__), "test_chat.json")
+    test_chat = os.path.join(os.path.dirname(__file__), "../test_chat.json")
     test = Test(
         "train_vicuna",
         [

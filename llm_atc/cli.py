@@ -18,6 +18,7 @@ Example usage:
 
 import click
 import hashlib
+import llm_atc.constants
 import sky
 import socket
 
@@ -114,7 +115,7 @@ def train(
     )
     if RunTracker.run_exists(name):
         raise ValueError(
-            f"Task with name {name} already exists in llm-atc. Try again with a different name"
+            f"Task with name {name} already exists in {llm_atc.constants.LLM_ATC_PATH}. Try again with a different name"
         )
     task = train_task(
         model_type,
