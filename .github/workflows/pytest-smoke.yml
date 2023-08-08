@@ -16,6 +16,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         test-path:
+          - tests/test_cli.py::test_hf_serve
           - tests/test_launch.py
           - tests/test_runtracker.py
           - tests/test_serve.py
@@ -41,5 +42,5 @@ jobs:
         run: |
           mkdir -p "/home/runner/.aws/"
           echo "$AWS_CREDENTIALS" > /home/runner/.aws/credentials
-          pytest ${{ matrix.test-path }} 
+          pytest -n 1 ${{ matrix.test-path }} 
 

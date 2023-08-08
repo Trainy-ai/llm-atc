@@ -125,7 +125,7 @@ def test_train_vicuna():
             f"sky logs {name} 1 --status",
         ],
         f"sky down --purge -y {name}",
-        timeout=30 * 60,
+        timeout=20 * 60,
     )
     run_one_test(test)
     RunTracker._delete(name)
