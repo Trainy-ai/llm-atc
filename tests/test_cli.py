@@ -95,6 +95,7 @@ def test_hf_serve():
     """
 
     name = "testhf"
+    ssh_config = os.path.expanduser("~/.ssh/config")
     test = Test(
         "serve_huggingface",
         [
@@ -102,7 +103,7 @@ def test_hf_serve():
             "sleep 120",
             'ip=$(grep -A1 "Host '
             + name
-            + '" ~/.ssh/config | grep "HostName" | awk \'{print $2}\'); curl $ip:8000',
+            + '" {ssh_config} | grep "HostName" | awk \'{print $2}\'); curl $ip:8000',
         ],
         f"sky stop {name} && sky down --purge -y {name}",
         timeout=25 * 60,
@@ -117,7 +118,7 @@ def test_train_vicuna():
         RunTracker._delete(name)
     except ValueError as e:
         pass
-    test_chat = os.path.join(os.path.dirname(__file__), "../test_chat.json")
+    test_chat = os.path.join(os.path.dirname(__file__), "../vicuna_test.json")
     test = Test(
         "train_vicuna",
         [

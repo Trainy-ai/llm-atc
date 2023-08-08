@@ -33,6 +33,8 @@ setup: |
   cd -
 
   # Install fastchat
+  conda install -y -c conda-forge accelerate
+  pip install sentencepiece
   git clone https://github.com/lm-sys/FastChat.git
   cd FastChat
   pip install -e .

@@ -41,6 +41,7 @@ jobs:
           AWS_CREDENTIALS: ${{ secrets.AWS_CREDENTIALS }}
         run: |
           mkdir -p "/home/runner/.aws/"
+          mkdir -p "/home/runner/.ssh"
           echo "$AWS_CREDENTIALS" > /home/runner/.aws/credentials
           pytest -n 1 ${{ matrix.test-path }} 
 
