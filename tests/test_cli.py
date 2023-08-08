@@ -98,12 +98,14 @@ def test_hf_serve():
     test = Test(
         "serve_huggingface",
         [
-            f"llm-atc serve --detach_run --name lmsys/vicuna-7b-v1.3 --accelerator A100:1 -c {name} --cloud gcp --region asia-southeast1",
+            f"llm-atc serve --detach_run --name lmsys/vicuna-7b-v1.3 --accelerator V100:1 -c {name} --cloud aws --region us-east-2",
             "sleep 120",
-            f"ip=$(ssh -G {name} | "
-            + "awk '/^hostname / { print $2 }'); curl $ip:23924/v1/models",
+            'ip=$(grep -A1 "Host '
+            + name
+            + '" ~/.ssh/config | grep "HostName" | awk \'{print $2}\'); curl $ip:8000',
         ],
-        f"sky down -y {name}",
+        f"sky down --purge -y {name} ",
+        timeout=30 * 60,
     )
     run_one_test(test)
 
@@ -118,11 +120,8 @@ def test_train_vicuna():
             f"llm-atc train --model_type vicuna --finetune_data {test_chat} --name {name} --description 'test case vicuna fine tune' -c mycluster --cloud gcp --envs 'MODEL_SIZE=7' --accelerator A100-80G:4",
             f"sky logs {name} 1 --status",
         ],
-        f"sky down -y {name}",
+        f"sky down --purge -y {name}",
+        timeout=30 * 60,
     )
     run_one_test(test)
     RunTracker._delete(name)
-
-
-if __name__ == "__main__":
-    test_hf_serve()

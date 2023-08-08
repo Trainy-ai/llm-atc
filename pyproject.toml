@@ -6,24 +6,19 @@ authors = ["Andrew Aikawa <asai@berkeley.edu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "3.10.x"
 omegaconf = "^2.3.0"
 posthog = "^3.0.1"
 prettytable = "^3.8.0"
-click = "^8.1.6"
-colorama = "^0.4.6"
 
 [tool.poetry.scripts]
 llm-atc = "llm_atc.cli:cli"
 
-[tool.poetry.group.test.dependencies]
-pytest = "^7.4.0"
-tox = "^4.6.4"
-
-
 [tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
 pre-commit = "^3.3.3"
 black = "^23.7.0"
+mypy = "^1.4.1"
 
 [build-system]
 requires = ["poetry-core"]

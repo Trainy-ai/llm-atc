@@ -18,10 +18,10 @@ conda create -n "sky" python=3.10
 conda activate sky
 
 # For Macs, macOS >= 10.15 is required to install SkyPilot. For Apple Silicon-based devices (e.g. Apple M1)
-pip uninstall grpcio; conda install -c conda-forge grpcio=1.43.0
+pip uninstall grpcio; conda install -c conda-forge grpcio=1.43.0 --force-reinstall
 
 # install the skypilot cli and dependency, for the clouds you want, e.g. GCP
-pip install skypilot[gcp] # for aws, skypilot[aws]
+pip install "skypilot[gcp] @ git+https://github.com/skypilot-org/skypilot.git" # for aws, skypilot[aws]
 
 
 # Configure your cloud credentials. This is a GCP example. See https://skypilot.readthedocs.io/en/latest/getting-started/ installation.html for examples with other cloud providers.
@@ -43,7 +43,6 @@ pip install llm-atc
 ### From source
 
 ```
-python -m pip install skypilot
 poetry install
 ```
 
@@ -55,7 +54,11 @@ Supported fine-tune methods.
 To start finetuning a model. Use `llm-atc train`. For example
 
 ```
+# start training
 llm-atc train --model_type vicuna --finetune_data ./vicuna_test.json --name myvicuna --description "This is a finetuned model that just says its name is vicuna" -c mycluster --cloud gcp --envs "MODEL_SIZE=7 WANDB_API_KEY=<my wandb key>" --accelerator A100-80G:4
+
+# shutdown cluster when done
+sky down mycluster
 ```
 
 If your client disconnects from the train, the train run will continue. You can check it's status with `sky queue mycluster`
@@ -82,13 +85,16 @@ llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c serveCluster 
 ```
 
 This creates a OpenAI API server on port 8000 on the cluster head and one model worker.
-Forward this port to your laptop with 
+Make a request from your laptop with.
 ```
-# Forward port 8000 to your localhost
-ssh -N -L 8000:localhost:8000 serveCluster
+# get the ip address of the OpenAI server
+ip=$(grep -A1 "Host serveCluster" ~/.ssh/config | grep "HostName" | awk '{print $2}')
 
 # test which models are available
-curl http://localhost:8000/v1/models
+curl http://$ip:8000/v1/models
+
+# stop model server cluster
+sky stop serveCluster
 ```
 and you can connect to this server and
 develop your using your finetuned models with your favorite LLM frameworks like [LangChain](https://python.langchain.com/docs/get_started/introduction.html). An example of how integrate Langchain (through Fastchat) is linked [here](https://github.com/lm-sys/FastChat/blob/main/docs/langchain_integration.md). **Example with ATC coming soon**
