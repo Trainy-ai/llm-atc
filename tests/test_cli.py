@@ -123,6 +123,5 @@ def test_train_vicuna():
     run_one_test(test)
     RunTracker._delete(name)
 
-
 if __name__ == "__main__":
     test_hf_serve()
