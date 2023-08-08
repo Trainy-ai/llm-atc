@@ -105,7 +105,7 @@ def test_hf_serve():
             + '" ~/.ssh/config | grep "HostName" | awk \'{print $2}\'); curl $ip:8000',
         ],
         f"sky down --purge -y {name} ",
-        timeout=30 * 60,
+        timeout=25 * 60,
     )
     run_one_test(test)
 
@@ -113,6 +113,10 @@ def test_hf_serve():
 @pytest.mark.cli
 def test_train_vicuna():
     name = "trainvicuna"
+    try:
+        RunTracker._delete(name)
+    except ValueError as e:
+        pass
     test_chat = os.path.join(os.path.dirname(__file__), "test_chat.json")
     test = Test(
         "train_vicuna",

@@ -8,8 +8,9 @@ def test_train():
         "vicuna",
         finetune_data="./vicuna_test.json",
         name="myvicuna",
-        cloud="gcp",
-        accelerator="A100-80GB:4",
+        cloud="aws",
+        region="us-east-2",
+        accelerator="A100:8",
         envs="HF_TOKEN=huggingFaceToken",
     )
     assert task.name == "myvicuna"

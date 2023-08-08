@@ -43,7 +43,7 @@ pip install llm-atc
 ### From source
 
 ```
-poetry install
+pip install -e .
 ```
 
 ## Finetuning

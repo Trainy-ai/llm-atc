@@ -10,6 +10,7 @@ python = "3.10.x"
 omegaconf = "^2.3.0"
 posthog = "^3.0.1"
 prettytable = "^3.8.0"
+click = "^8.1.6"
 
 [tool.poetry.scripts]
 llm-atc = "llm_atc.cli:cli"
