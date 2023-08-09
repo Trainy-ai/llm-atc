@@ -17,15 +17,20 @@ setup: |
   fi
 
   # Install dependencies
+  pip install pandas
+  pip install ray==2.5.1
+  conda install -y -c conda-forge accelerate
+  pip install sentencepiece
   pip install vllm
   pip install git+https://github.com/lm-sys/FastChat.git
   pip install --upgrade openai
-  pip install ray==2.5.1
   if [[ "$HF_TOKEN" != "" ]];
   then
     pip install --upgrade huggingface_hub
     python -c "import huggingface_hub; huggingface_hub.login('${HF_TOKEN}')"
   fi
+
+  pip install git+https://github.com/huggingface/transformers.git
 
   sudo apt update
   sudo apt install -y rclone
@@ -50,6 +55,10 @@ run: |
   echo "The head address is ${master_addr}"
 
   conda activate chatbot  
+  if [ $? -ne 0 ]; then
+    conda create -n chatbot python=3.10 -y
+    conda activate chatbot
+  fi
 
   if [ "${SKYPILOT_NODE_RANK}" == "0" ]; then
     echo 'Starting controller...'
@@ -61,14 +70,14 @@ run: |
   
   echo "Starting $MODEL_NAME model worker..."
   python -u -m fastchat.serve.vllm_worker \
-            --model-path $MODEL_NAME --controller-address "http://${master_addr}:21001" --host 0.0.0.0 --port 31000 --worker-address "http://${this_addr}:31000" 2>&1 | tee model_worker.log &
+            --model-path $MODEL_NAME --num-gpus ${SKYPILOT_NUM_GPUS_PER_NODE} --controller-address "http://${master_addr}:21001" --host 0.0.0.0 --port 31000 --worker-address "http://${this_addr}:31000" 2>&1 | tee model_worker.log &
 
   echo 'Waiting for model worker to start...'
   while ! `cat model_worker.log | grep -q 'Send heart beat'`; do sleep 1; done
 
   if [ "${SKYPILOT_NODE_RANK}" == "0" ]; then
     echo "Starting openai_api_server server..."
-    python -m fastchat.serve.openai_api_server --host 0.0.0.0 --controller-address "http://${master_addr}:21001" --port 8000
+    python -m fastchat.serve.openai_api_server --host 0.0.0.0 --controller-address "http://${master_addr}:21001" --port 8000 2>&1 | tee ~/api_server.log &
   fi
   
 

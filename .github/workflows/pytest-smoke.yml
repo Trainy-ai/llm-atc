@@ -31,6 +31,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
+          sudo apt-get install -y openssh-client
           python -m pip install --upgrade pip
           pip install pytest pytest-xdist pytest-env>=0.6
           pip install "skypilot[aws] @ git+https://github.com/skypilot-org/skypilot.git"
@@ -40,8 +41,15 @@ jobs:
         env:
           AWS_CREDENTIALS: ${{ secrets.AWS_CREDENTIALS }}
         run: |
-          mkdir -p "/home/runner/.aws/"
+          mkdir -p "/home/runner/.aws"
           mkdir -p "/home/runner/.ssh"
           echo "$AWS_CREDENTIALS" > /home/runner/.aws/credentials
           pytest -n 1 ${{ matrix.test-path }} 
-
+      - name: Upload logs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: error-log
+          path: |
+            /tmp/serve_huggingface-*.log
+            /home/runner/sky_logs/sky-*/*.log

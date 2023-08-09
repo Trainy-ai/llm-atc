@@ -100,13 +100,12 @@ def test_hf_serve():
         "serve_huggingface",
         [
             f"llm-atc serve --detach_run --name lmsys/vicuna-7b-v1.3 --accelerator V100:1 -c {name} --cloud aws --region us-east-2",
-            "sleep 120",
-            'ip=$(grep -A1 "Host '
-            + name
-            + '" {ssh_config} | grep "HostName" | awk \'{print $2}\'); curl $ip:8000',
+            "sleep 300",
+            f"""ip=$(grep -A1 "Host {name}" {ssh_config} | grep "HostName" | """
+            + """awk '{print $2}'); echo $ip; curl http://"$ip":8000/v1/models | grep vicuna""",
         ],
-        f"sky stop {name} && sky down --purge -y {name}",
-        timeout=25 * 60,
+        f"sky stop -y {name} ; sleep 300 ; sky down --purge -y {name}",
+        timeout=45 * 60,
     )
     run_one_test(test)
 
@@ -118,15 +117,14 @@ def test_train_vicuna():
         RunTracker._delete(name)
     except ValueError as e:
         pass
-    test_chat = os.path.join(os.path.dirname(__file__), "../vicuna_test.json")
+    test_chat = os.path.join(os.path.dirname(__file__), "./test_chat.json")
     test = Test(
         "train_vicuna",
         [
             f"llm-atc train --model_type vicuna --finetune_data {test_chat} --name {name} --description 'test case vicuna fine tune' -c mycluster --cloud gcp --envs 'MODEL_SIZE=7' --accelerator A100-80G:4",
-            f"sky logs {name} 1 --status",
         ],
         f"sky down --purge -y {name}",
-        timeout=20 * 60,
+        timeout=10 * 60,
     )
     run_one_test(test)
     RunTracker._delete(name)

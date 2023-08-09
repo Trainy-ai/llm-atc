@@ -49,7 +49,7 @@ pip install -e .
 ## Finetuning
 
 Supported fine-tune methods.
-- Vicuna (chat-finetuning)
+- Vicuna-Llama (chat-finetuning)
 
 To start finetuning a model. Use `llm-atc train`. For example
 
@@ -78,26 +78,26 @@ g3://llm-atc/myvicuna
 
 ```
 # serve an llm-atc finetuned model, requires `llm-atc/` prefix and grabs model checkpoint from object store
-llm-atc serve --name llm-atc/myvicuna --accelerator A100:1 -c serveCluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
+llm-atc serve --name llm-atc/myvicuna --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
 
 # serve a HuggingFace model, e.g. `lmsys/vicuna-13b-v1.3`
-llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c serveCluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
+llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
 ```
 
-This creates a OpenAI API server on port 8000 on the cluster head and one model worker.
+This creates a OpenAI API server on port 8000 of the cluster head and one model worker.
 Make a request from your laptop with.
 ```
 # get the ip address of the OpenAI server
-ip=$(grep -A1 "Host serveCluster" ~/.ssh/config | grep "HostName" | awk '{print $2}')
+ip=$(grep -A1 "Host servecluster" ~/.ssh/config | grep "HostName" | awk '{print $2}')
 
 # test which models are available
 curl http://$ip:8000/v1/models
 
 # stop model server cluster
-sky stop serveCluster
+sky stop servecluster
 ```
 and you can connect to this server and
-develop your using your finetuned models with your favorite LLM frameworks like [LangChain](https://python.langchain.com/docs/get_started/introduction.html). An example of how integrate Langchain (through Fastchat) is linked [here](https://github.com/lm-sys/FastChat/blob/main/docs/langchain_integration.md). **Example with ATC coming soon**
+develop your using your finetuned models with other LLM frameworks like [LlamaIndex](https://github.com/jerryjliu/llama_index). Look at `examples/` to see how to interact with your API endpoint.
 
 
 ## How does it work?

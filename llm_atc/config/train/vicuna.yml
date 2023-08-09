@@ -9,8 +9,6 @@ file_mounts:
   /artifacts:
     name: llm-atc
     mode: MOUNT
-    
-  /data/mydata.json: ./vicuna_test.json
 
 workdir: .
 
@@ -22,9 +20,6 @@ setup: |
     conda activate chatbot
   fi
 
-  # Install pytorch
-  pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
-
   # Install huggingface with the LLaMA commit
   git clone https://github.com/huggingface/transformers.git
   cd transformers
@@ -35,6 +30,9 @@ setup: |
   # Install fastchat
   conda install -y -c conda-forge accelerate
   pip install sentencepiece
+
+  # Install pytorch
+  pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
   git clone https://github.com/lm-sys/FastChat.git
   cd FastChat
   pip install -e .

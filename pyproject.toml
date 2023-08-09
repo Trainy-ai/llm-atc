@@ -15,7 +15,7 @@ click = "^8.1.6"
 [tool.poetry.scripts]
 llm-atc = "llm_atc.cli:cli"
 
-[tool.poetry.group.dev.dependencies]
+[tool.poetry.dev-dependencies]
 pytest = "^7.4.0"
 pre-commit = "^3.3.3"
 black = "^23.7.0"

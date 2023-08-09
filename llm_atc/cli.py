@@ -6,13 +6,13 @@ Example usage:
   $ llm-atc
 
   # Start training an llm
-  $ llm-atc train --model_type vicuna --name myVicuna --cluster mycluster
+  $ llm-atc train --model_type vicuna --name myvicuna --cluster mycluster
 
   # Show the list of models
   $ llm-atc list
 
   # Deploy an instance of a trained model
-  $ llm-atc serve --name myVicuna --cluster serving-cluster
+  $ llm-atc serve --name myvicuna --cluster servingcluster
 
 """
 
