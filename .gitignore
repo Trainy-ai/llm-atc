@@ -1,8 +1,10 @@
 # ignore pip install -e build packages
 llm_atc/__pycache__/*
+examples/*/__pycache__/*
 dist/*
 .pytest_cache*
 .mypy_cache/*
 .tox/*
 .DS_STORE
 tests/__pycache__/*
+docs/build

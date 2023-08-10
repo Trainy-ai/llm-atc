@@ -19,23 +19,25 @@ Example usage:
 import click
 import hashlib
 import llm_atc.constants
+import os
 import sky
 import socket
-
-hostname = socket.gethostname()
 
 from datetime import datetime
 from llm_atc.launch import train_task, SUPPORTED_MODELS
 from llm_atc.run import RunTracker
 from llm_atc.serve import serve_route
+from posthog import Posthog
 from typing import List, Optional
 
-from posthog import Posthog
+hostname = socket.gethostname()
 
 posthog = Posthog(
     project_api_key="phc_4UgX80BfVNmYRZ2o3dJLyRMGkv1CxBozPAcPnD29uP4",
     host="https://app.posthog.com",
 )
+
+disable_telemetry = os.environ.get("LLM_ATC_DISABLE", "0") == "1"
 
 
 @click.group()
@@ -108,11 +110,12 @@ def train(
 ):
     """Launch a train job on a cloud provider"""
 
-    posthog.capture(
-        f"{hashlib.md5(hostname.encode('utf-8'))}",
-        event="training launched",
-        timestamp=datetime.utcnow(),
-    )
+    if not disable_telemetry:
+        posthog.capture(
+            f"{hashlib.md5(hostname.encode('utf-8'))}",
+            event="training launched",
+            timestamp=datetime.utcnow(),
+        )
     if RunTracker.run_exists(name):
         raise ValueError(
             f"Task with name {name} already exists in {llm_atc.constants.LLM_ATC_PATH}. Try again with a different name"
@@ -196,11 +199,12 @@ def serve(
     detach_run: Optional[bool],
 ):
     """Create a cluster to serve an openAI.api_server using FastChat and vLLM"""
-    posthog.capture(
-        f"{hashlib.md5(hostname.encode('utf-8'))}",
-        event="serving launched",
-        timestamp=datetime.utcnow(),
-    )
+    if not disable_telemetry:
+        posthog.capture(
+            f"{hashlib.md5(hostname.encode('utf-8'))}",
+            event="serving launched",
+            timestamp=datetime.utcnow(),
+        )
     serve_task = serve_route(
         name,
         accelerator=accelerator,

@@ -15,7 +15,7 @@ print(prompt + completion.choices[0].text)
 
 # create a chat completion
 completion = openai.ChatCompletion.create(
-    model=model, messages=[{"role": "user", "content": "Hello! What is your name?"}]
+    model=model, messages=[{"role": "user", "content": "Hello! Who are you?"}]
 )
 # print the completion
 print(completion.choices[0].message.content)

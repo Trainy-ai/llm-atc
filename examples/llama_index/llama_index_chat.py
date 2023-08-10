@@ -1,18 +1,10 @@
-# import os
-# import openai
-
-# openai.api_key = "EMPTY"
-# openai.api_base = "http://18.189.143.10:8000/v1"
-
-
-# from llama_index.callbacks import CallbackManager
-# from typing import Any, Dict, Optional
-import os
+import openai
 from llama_index.llms import ChatMessage, OpenAI
 from llama_index.llms.base import LLMMetadata
 
-os.environ["OPENAI_API_KEY"] = "sk-" + 48 * "a"
-os.environ["OPENAI_API_BASE"] = "http://18.189.143.10:8000/v1"
+FASTCHAT_IP = "18.189.143.10"
+openai.api_base = f"http://{FASTCHAT_IP}:8000/v1"
+openai.api_key = "sk-" + 48 * "a"  # this is a placeholder
 
 
 class FastChatLlama2(OpenAI):

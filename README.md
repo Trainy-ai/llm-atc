@@ -12,7 +12,7 @@ LLM-ATC (**A**ir **T**raffic **C**ontroller) is a CLI for fine tuning and servin
 
 Follow the instructions here [to install Skypilot and provide cloud credentials](https://skypilot.readthedocs.io/en/latest/getting-started/installation.html). We use Skypilot for cloud orchestration. Steps to setup an environment is shown below.
 
-```
+```bash
 # create a fresh environment
 conda create -n "sky" python=3.10
 conda activate sky
@@ -36,13 +36,13 @@ sky check
 
 ### From PyPi
 
-```
+```bash
 pip install llm-atc
 ```
 
 ### From source
 
-```
+```bash
 pip install -e .
 ```
 
@@ -53,7 +53,7 @@ Supported fine-tune methods.
 
 To start finetuning a model. Use `llm-atc train`. For example
 
-```
+```bash
 # start training
 llm-atc train --model_type vicuna --finetune_data ./vicuna_test.json --name myvicuna --description "This is a finetuned model that just says its name is vicuna" -c mycluster --cloud gcp --envs "MODEL_SIZE=7 WANDB_API_KEY=<my wandb key>" --accelerator A100-80G:4
 
@@ -76,7 +76,7 @@ g3://llm-atc/myvicuna
 
 `llm-atc` can serve both models from HuggingFace or that you've trained through `llm-atc serve`. For example
 
-```
+```bash
 # serve an llm-atc finetuned model, requires `llm-atc/` prefix and grabs model checkpoint from object store
 llm-atc serve --name llm-atc/myvicuna --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
 
@@ -86,7 +86,7 @@ llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c servecluster 
 
 This creates a OpenAI API server on port 8000 of the cluster head and one model worker.
 Make a request from your laptop with.
-```
+```bash
 # get the ip address of the OpenAI server
 ip=$(grep -A1 "Host servecluster" ~/.ssh/config | grep "HostName" | awk '{print $2}')
 
@@ -99,6 +99,13 @@ sky stop servecluster
 and you can connect to this server and
 develop your using your finetuned models with other LLM frameworks like [LlamaIndex](https://github.com/jerryjliu/llama_index). Look at `examples/` to see how to interact with your API endpoint.
 
+## Telemetry
+
+By default, LLM-ATC collects anonymized data about when a train or serve request is made with PostHog. Telemetry helps us identify where users are engaging with LLM-ATC. However, if you would like to disable telemetry, set
+
+```bash
+export LLM_ATC_DISABLE=1
+```
 
 ## How does it work?
 
