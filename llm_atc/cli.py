@@ -18,10 +18,11 @@ Example usage:
 
 import click
 import hashlib
+import logging
 import llm_atc.constants
 import os
-import sky
 import socket
+import sky
 
 from datetime import datetime
 from llm_atc.launch import train_task, SUPPORTED_MODELS
