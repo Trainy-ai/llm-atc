@@ -9,7 +9,7 @@ llm-atc serve --name meta-llama/Llama-2-7b-chat-hf --accelerator V100:1 -c serve
 grep -A1 "Host servecluster" ~/.ssh/config | grep "HostName" | awk '{print $2}'
 ```
 
-Run the example.
+Set the value of `FASTCHAT_IP` in `llama_index_chat.py` to the IP address obtained from the previous step and run the example
 
 ```bash
 python llama_index_chat.py

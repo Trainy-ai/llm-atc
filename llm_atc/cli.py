@@ -56,7 +56,7 @@ def cli():
     "--finetune_data",
     type=str,
     required=True,
-    help="local/cloud URI to finetuning data. (e.g ~/mychat.json, s3://my_bucket/my_chat.json",
+    help="local/cloud URI to finetuning data. (e.g ~/mychat.json, s3://my_bucket/my_chat.json)",
 )
 @click.option("-n", "--name", type=str, help="Name of this model run.", required=True)
 @click.option(

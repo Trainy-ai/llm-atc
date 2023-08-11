@@ -39,10 +39,32 @@ Examples
 --------------------------
 
 - `Hosting & Querying an OpenAI endpoint <https://github.com/Trainy-ai/llm-atc/tree/main/examples/openAI>`_
-- `LlamaIndex chat complete <https://github.com/Trainy-ai/llm-atc/tree/main/examples/llama_indexma>`_
+- `LlamaIndex chat complete <https://github.com/Trainy-ai/llm-atc/tree/main/examples/llama_index>`_
+
+Documentation
+-------------
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Quickstart
+
+   quickstart/installation
+   quickstart/finetuning
+   quickstart/serving
+
+Reference
+---------
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Reference
+
+   reference/cli
 
 External Links
 --------------------------
+
+- `Trainy Developer Blog <https://trainy.ai/blog>`_
 
 This project is powered by:
 
@@ -50,23 +72,3 @@ This project is powered by:
 - `vLLM <https://vllm.readthedocs.io/en/latest/>`_
 - `FastChat <https://github.com/lm-sys/FastChat/tree/main>`_
 - `HuggingFace <https://huggingface.co/>`_
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-Contents
---------
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Quickstart
-
-   installation
