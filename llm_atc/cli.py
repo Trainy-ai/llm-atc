@@ -18,7 +18,6 @@ Example usage:
 
 import click
 import hashlib
-import logging
 import llm_atc.constants
 import os
 import socket

@@ -4,7 +4,7 @@ Finetuning
 Supported Finetuning Methods
 ----------------------------
 
-- Chat finetune (e.g. Vicuna)
+- :ref:`Chat finetune (e.g. Vicuna) <finetuning-schema>`
 
 Example: Vicuna Finetuning
 --------------------------

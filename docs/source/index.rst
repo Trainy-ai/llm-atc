@@ -40,6 +40,7 @@ Examples
 
 - `Hosting & Querying an OpenAI endpoint <https://github.com/Trainy-ai/llm-atc/tree/main/examples/openAI>`_
 - `LlamaIndex chat complete <https://github.com/Trainy-ai/llm-atc/tree/main/examples/llama_index>`_
+- `Langchain chat complete <https://github.com/Trainy-ai/llm-atc/tree/main/examples/langchain>`_
 
 Documentation
 -------------
@@ -60,6 +61,7 @@ Reference
    :caption: Reference
 
    reference/cli
+   reference/finetuning-schema
 
 External Links
 --------------------------

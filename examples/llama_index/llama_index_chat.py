@@ -2,9 +2,9 @@ import openai
 from llama_index.llms import ChatMessage, OpenAI
 from llama_index.llms.base import LLMMetadata
 
-FASTCHAT_IP = "18.189.143.10"
+FASTCHAT_IP = "<YOUR ENDPOINT IP>"
 openai.api_base = f"http://{FASTCHAT_IP}:8000/v1"
-openai.api_key = "sk-" + 48 * "a"  # this is a placeholder
+openai.api_key = "EMPTY"
 
 
 class FastChatLlama2(OpenAI):
@@ -24,5 +24,5 @@ messages = [
     ChatMessage(role="user", content="What is your name"),
 ]
 
-resp = FastChatLlama2(model="Llama-2-7b-chat-hf", max_tokens=4000).chat(messages)
+resp = FastChatLlama2(model="Llama-2-7b-chat-hf", max_tokens=64).chat(messages)
 print(resp)

@@ -8,6 +8,8 @@
 
 LLM-ATC (**A**ir **T**raffic **C**ontroller) is a CLI for fine tuning and serving open source models using your own cloud credentials. We hope that this project can lower the cognitive overhead of orchestration for fine tuning and model serving.
 
+**Refer to the docs for the most up to date usage information. This README is updated less frequently**
+
 ## Installation
 
 Follow the instructions here [to install Skypilot and provide cloud credentials](https://skypilot.readthedocs.io/en/latest/getting-started/installation.html). We use Skypilot for cloud orchestration. Steps to setup an environment is shown below.

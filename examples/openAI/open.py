@@ -3,7 +3,7 @@ import openai
 # to get proper authentication, make sure to use a valid key that's listed in
 # the --api-keys flag. if no flag value is provided, the `api_key` will be ignored.
 openai.api_key = "EMPTY"
-openai.api_base = "http://18.189.143.10:8000/v1"
+openai.api_base = "http://<YOUR ENDPOINT IP>:8000/v1"
 
 model = "Llama-2-7b-chat-hf"
 prompt = "Once upon a time"
