@@ -15,7 +15,7 @@ We recommend installing LLM-ATC and the `Skypilot dependency <https://skypilot.r
     # install the skypilot cli and dependency, for the clouds you want, e.g. AWS, GCP
     $ pip install "skypilot[aws,gcp] @ git+https://github.com/skypilot-org/skypilot.git"
 
-    # install cloud credentials
+    # install llm-atc
     $ pip install llm-atc
 
 
@@ -24,7 +24,7 @@ Installation from Source
 .. code-block:: console
 
     $ git clone https://github.com/Trainy-ai/llm-atc.git
-    $ git install -e llm-atc
+    $ pip install -e llm-atc
 
 Cloud Credentials
 ------------------------
