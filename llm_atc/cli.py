@@ -94,6 +94,8 @@ def cli():
     "--no_setup",
     help="Skip setup. Faster if cluster is already provisioned and UP",
     default=False,
+    is_flag=True,
+    show_default=True,
 )
 def train(
     model_type: str,

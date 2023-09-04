@@ -15,7 +15,7 @@ Welcome to LLM ATC's documentation!
 .. raw:: html
 
    <p style="text-align:center">
-   <a class="reference external image-reference" style="vertical-align:9.5px" href="https://discord.gg/MXAgZXpU"><img src="https://dcbadge.vercel.app/api/server/d67CMuKY5V" style="height:27px"></a>
+   <a class="reference external image-reference" style="vertical-align:9.5px" href="https://discord.com/invite/HQUBJSVgAP"><img src="https://dcbadge.vercel.app/api/server/d67CMuKY5V" style="height:27px"></a>
    <script async defer src="https://buttons.github.io/buttons.js"></script>
    <a class="github-button" href="https://github.com/Trainy-ai/llm-atc" data-show-count="true" data-size="large" aria-label="Star llm-atc on GitHub">Star</a>
    <a class="github-button" href="https://github.com/Trainy-ai/llm-atc/subscription" data-icon="octicon-eye" data-size="large" aria-label="Watch llm-atc on GitHub">Watch</a>
