@@ -4,11 +4,6 @@ resources:
   ports:
     - 8000
 
-file_mounts:
-  /llm-atc:
-    name: llm-atc # Make sure it is unique or you own this bucket name
-    mode: MOUNT  # MOUNT or COPY. Defaults to MOUNT if not specified
-
 setup: |
   conda activate chatbot
   if [ $? -ne 0 ]; then
@@ -22,7 +17,7 @@ setup: |
   conda install -y -c conda-forge accelerate
   pip install sentencepiece
   pip install vllm
-  pip install git+https://github.com/lm-sys/FastChat.git
+  pip install git+https://github.com/lm-sys/FastChat.git@v0.2.28
   pip install --upgrade openai
   if [[ "$HF_TOKEN" != "" ]];
   then
@@ -49,7 +44,6 @@ run: |
   master_addr=`echo "$SKYPILOT_NODE_IPS" | head -n1`
   let x='SKYPILOT_NODE_RANK + 1'
   this_addr=`echo "$SKYPILOT_NODE_IPS" | sed -n "${x}p"`
-  MODEL_NAME=`echo "$MODELS_LIST" | sed -n "${x}p"`
 
   echo "The ip address of this machine is ${this_addr}"
   echo "The head address is ${master_addr}"
@@ -82,5 +76,5 @@ run: |
   
 
 envs:
-  MODELS_LIST: lmsys/vicuna-7b-v1.3
+  MODEL_NAME: lmsys/vicuna-7b-v1.3
   HF_TOKEN: ""

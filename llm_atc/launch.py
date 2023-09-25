@@ -2,6 +2,7 @@ import llm_atc.constants
 import logging
 import os
 import sky
+from sky.data.storage import Storage
 
 from omegaconf import OmegaConf
 from typing import Any, Dict, Optional
@@ -10,7 +11,7 @@ from typing import Any, Dict, Optional
 SUPPORTED_MODELS = ("vicuna",)
 
 
-def train_task(model_type: str, **launcher_kwargs) -> sky.Task:
+def train_task(model_type: str, *args, **launcher_kwargs) -> sky.Task:
     """
     Dispatch train launch to corresponding task default config
 
@@ -39,6 +40,9 @@ class Launcher:
     def __init__(
         self,
         finetune_data: str,
+        checkpoint_bucket: str,
+        checkpoint_path: str,
+        checkpoint_store: str,
         name: Optional[str] = None,
         cloud: Optional[str] = None,
         region: Optional[str] = None,
@@ -47,6 +51,9 @@ class Launcher:
         envs: Optional[str] = "",
     ):
         self.finetune_data: str = finetune_data
+        self.checkpoint_bucket: str = checkpoint_bucket
+        self.checkpoint_path: str = checkpoint_path
+        self.checkpoint_store: str = checkpoint_store
         self.name: Optional[str] = name
         self.cloud: Optional[str] = cloud
         self.region: Optional[str] = region
@@ -85,8 +92,14 @@ class VicunaLauncher(Launcher):
             logging.warning(
                 "No huggingface token provided. You will not be able to finetune starting from private or gated models"
             )
+        self.envs["MY_BUCKET"] = self.checkpoint_bucket
+        self.envs["BUCKET_PATH"] = self.checkpoint_path
+        self.envs["BUCKET_TYPE"] = self.checkpoint_store
         task.update_envs(self.envs)
         task.update_file_mounts({"/data/mydata.json": self.finetune_data})
+        storage = Storage(name=self.checkpoint_bucket)
+        storage.add_store(self.checkpoint_store)
+        task.update_storage_mounts({"/artifacts": storage})
         resource = list(task.get_resources())[0]
         resource._set_accelerators(self.accelerator, None)
         resource._cloud = sky.clouds.CLOUD_REGISTRY.from_str(self.cloud)
