@@ -6,6 +6,9 @@ from llm_atc.launch import train_task
 def test_train():
     task = train_task(
         "vicuna",
+        checkpoint_bucket="llm-atc",
+        checkpoint_path="myvicuna",
+        checkpoint_store="S3",
         finetune_data="./vicuna_test.json",
         name="myvicuna",
         cloud="aws",

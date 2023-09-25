@@ -40,9 +40,9 @@ class Launcher:
     def __init__(
         self,
         finetune_data: str,
-        checkpoint_bucket: str,
-        checkpoint_path: str,
-        checkpoint_store: str,
+        checkpoint_bucket: str = "llm-atc",
+        checkpoint_path: str = "my_vicuna",
+        checkpoint_store: str = "S3",
         name: Optional[str] = None,
         cloud: Optional[str] = None,
         region: Optional[str] = None,

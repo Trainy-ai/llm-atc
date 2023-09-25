@@ -8,7 +8,7 @@ from omegaconf import OmegaConf
 from typing import Any, Dict, List, Optional
 
 
-def serve_route(model_name: str, source: Optional[str], **serve_kwargs):
+def serve_route(model_name: str, source: Optional[str] = None, **serve_kwargs):
     """Routes model serve requests to the corresponding model serve config
 
     Args:
