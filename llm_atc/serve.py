@@ -8,7 +8,7 @@ from omegaconf import OmegaConf
 from typing import Any, Dict, List, Optional
 
 
-def serve_route(model_names: List[str], **serve_kwargs):
+def serve_route(model_name: str, source: Optional[str] = None, **serve_kwargs):
     """Routes model serve requests to the corresponding model serve config
 
     Args:
@@ -17,19 +17,22 @@ def serve_route(model_names: List[str], **serve_kwargs):
     Raises:
         ValueError: requested non-existent model from llm-atc
     """
-    model_names = list(model_names)
-    for i, name in enumerate(model_names):
-        if name.startswith("llm-atc/") and not RunTracker.run_exists(
-            name.split("/")[-1]
-        ):
-            raise ValueError(f"model = {name} does not exist within llm-atc.")
-    return Serve(model_names, **serve_kwargs).serve()
+    if model_name.startswith("llm-atc/") and source is None:
+        raise ValueError(
+            "Attempting to use a finetuned model without a corresponding object store location"
+        )
+    elif not source is None and not model_name.startswith("llm-atc/"):
+        logging.warning(
+            "Specified object store mount but model is not an llm-atc model. Skipping mounting."
+        )
+    return Serve(model_name, source, **serve_kwargs).serve()
 
 
 class Serve:
     def __init__(
         self,
-        names: List[str],
+        names: str,
+        source: Optional[str],
         accelerator: Optional[str] = None,
         cloud: Optional[str] = None,
         region: Optional[str] = None,
@@ -37,6 +40,7 @@ class Serve:
         envs: str = "",
     ):
         self.names = names
+        self.source = source
         self.num_models = len(names)
         self.accelerator = accelerator
         self.envs: Dict[Any, Any] = (
@@ -65,7 +69,7 @@ class Serve:
     def serve(self) -> sky.Task:
         """Deploy fastchat.serve.openai_api_server with vllm_worker"""
         serve_task = self.default_serve_task
-        self.envs["MODELS_LIST"] = "\n".join(self.names)
+        self.envs["MODEL_NAME"] = self.names
         if "HF_TOKEN" not in self.envs:
             logging.warning(
                 "No huggingface token provided. You will not be able to access private or gated models"
@@ -76,5 +80,6 @@ class Serve:
         resource._cloud = sky.clouds.CLOUD_REGISTRY.from_str(self.cloud)
         resource._set_region_zone(self.region, self.zone)
         serve_task.set_resources(resource)
-        serve_task.num_noded = self.num_models
+        if self.source and self.names.startswith("llm-atc/"):
+            serve_task.update_file_mounts({"/" + self.names: self.source})
         return serve_task

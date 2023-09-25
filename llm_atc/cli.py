@@ -58,6 +58,21 @@ def cli():
     required=True,
     help="local/cloud URI to finetuning data. (e.g ~/mychat.json, s3://my_bucket/my_chat.json)",
 )
+@click.option(
+    "--checkpoint_bucket", type=str, required=True, help="object store bucket name"
+)
+@click.option(
+    "--checkpoint_path",
+    type=str,
+    required=True,
+    help="object store path for fine tuned checkpoints, e.g. ~/datasets",
+)
+@click.option(
+    "--checkpoint_store",
+    type=str,
+    required=True,
+    help="object store type ['S3', 'GCS', 'AZURE', 'R2', 'IBM']",
+)
 @click.option("-n", "--name", type=str, help="Name of this model run.", required=True)
 @click.option(
     "--description", type=str, default="", help="description of this model run"
@@ -100,6 +115,9 @@ def cli():
 def train(
     model_type: str,
     finetune_data: str,
+    checkpoint_bucket: str,
+    checkpoint_path: str,
+    checkpoint_store: Optional[str],
     name: str,
     description: str,
     cluster: Optional[str],
@@ -118,12 +136,11 @@ def train(
             event="training launched",
             timestamp=datetime.utcnow(),
         )
-    if RunTracker.run_exists(name):
-        raise ValueError(
-            f"Task with name {name} already exists in {llm_atc.constants.LLM_ATC_PATH}. Try again with a different name"
-        )
     task = train_task(
         model_type,
+        checkpoint_bucket=checkpoint_bucket,
+        checkpoint_path=checkpoint_path,
+        checkpoint_store=checkpoint_store,
         finetune_data=finetune_data,
         name=name,
         cloud=cloud,
@@ -146,7 +163,11 @@ def train(
     "--name",
     help="name of model to serve",
     required=True,
-    multiple=True,
+)
+@click.option(
+    "--source",
+    help="object store path for llm-atc finetuned model checkpoints."
+    "e.g. s3://<bucket-name>/<path>/<to>/<checkpoints>",
 )
 @click.option(
     "-e",
@@ -189,7 +210,8 @@ def train(
     help="Don't connect to this session",
 )
 def serve(
-    name: List[str],
+    name: str,
+    source: Optional[str],
     accelerator: Optional[str],
     envs: Optional[str],
     cluster: Optional[str],
@@ -209,6 +231,7 @@ def serve(
         )
     serve_task = serve_route(
         name,
+        source=source,
         accelerator=accelerator,
         envs=envs,
         cloud=cloud,

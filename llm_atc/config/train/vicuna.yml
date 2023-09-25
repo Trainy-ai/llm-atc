@@ -7,10 +7,9 @@ num_nodes: 1
 
 file_mounts:
   /artifacts:
-    name: llm-atc
+    name: ${MY_BUCKET} # Name of the bucket.
     mode: MOUNT
-
-workdir: .
+    store: ${BUCKET_TYPE} # s3, gcs, r2, ibm
 
 setup: |
   # Setup the environment
@@ -64,7 +63,7 @@ run: |
   # the training for saving checkpoints.
   mkdir -p ~/.checkpoints
   LOCAL_CKPT_PATH=~/.checkpoints
-  CKPT_PATH=/artifacts/${MODEL_NAME}
+  CKPT_PATH=/artifacts/${BUCKET_PATH}/${MODEL_NAME}
   mkdir -p $CKPT_PATH
   last_ckpt=$(ls ${CKPT_PATH} | grep -E '[0-9]+' | sort -t'-' -k1,1 -k2,2n | tail -1)
   mkdir -p ~/.checkpoints/${last_ckpt}
@@ -127,3 +126,6 @@ envs:
   WANDB_API_KEY: ""
   MODEL_NAME: "vicuna_test"
   HF_TOKEN: ""
+  MY_BUCKET: "llm-atc"
+  BUCKET_PATH: "my_vicuna" # object store path.
+  BUCKET_TYPE: "S3"

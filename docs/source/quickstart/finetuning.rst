@@ -14,7 +14,7 @@ To do a vicuna finetune of your first model through LLM-ATC, run the following
 .. code-block:: console
 
     # start training
-    $ llm-atc train --model_type vicuna --finetune_data ./vicuna_test.json --name myvicuna --description "This is a finetuned model that just says its name is vicuna" -c mycluster --cloud gcp --envs "MODEL_SIZE=7 WANDB_API_KEY=<my wandb key>" --accelerator A100-80G:4
+    $ llm-atc train --model_type vicuna --finetune_data ./vicuna_test.json --name myvicuna --checkpoint_bucket my-trainy-bucket --checkpoint_path ~/test_vicuna --checkpoint_store S3 --description "This is a finetuned model that just says its name is vicuna" -c mycluster --cloud gcp --envs "MODEL_SIZE=7 WANDB_API_KEY=<my wandb key>" --accelerator A100-80G:4
 
     # Once training is done, shutdown the cluster
     $ sky down

@@ -13,7 +13,7 @@ by using the :code:`llm-atc/` prefix.
 .. code-block:: console
 
     # serve an llm-atc finetuned model, requires `llm-atc/` prefix and grabs model checkpoint from object store
-    $ llm-atc serve --name llm-atc/myvicuna --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
+    $ llm-atc serve --name llm-atc/myvicuna --source s3://my-bucket/my_vicuna/ --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
 
     # serve a HuggingFace model, e.g. `lmsys/vicuna-13b-v1.3`
     $ llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
