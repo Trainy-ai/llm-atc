@@ -121,7 +121,7 @@ def test_train_vicuna():
     test = Test(
         "train_vicuna",
         [
-            f"llm-atc train --checkpoint_bucket llm-atc --checkpoint_path ~/test_vicuna --checkpoint_store S3 --model_type vicuna --finetune_data {test_chat} --name {name} --description 'test case vicuna fine tune' -c mycluster --cloud gcp --envs 'MODEL_SIZE=7' --accelerator A100-80G:4",
+            f"llm-atc train --checkpoint_bucket llm-atc --checkpoint_store S3 --model_type vicuna --finetune_data {test_chat} --name {name} --description 'test case vicuna fine tune' -c mycluster --cloud gcp --envs 'MODEL_SIZE=7' --accelerator A100-80G:4",
         ],
         f"sky down --purge -y {name}",
         timeout=10 * 60,

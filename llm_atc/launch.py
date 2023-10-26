@@ -41,18 +41,16 @@ class Launcher:
         self,
         finetune_data: str,
         checkpoint_bucket: str = "llm-atc",
-        checkpoint_path: str = "my_vicuna",
         checkpoint_store: str = "S3",
         name: Optional[str] = None,
         cloud: Optional[str] = None,
-        region: Optional[str] = None,
-        zone: Optional[str] = None,
         accelerator: Optional[str] = None,
         envs: Optional[str] = "",
+        region: Optional[str] = None,
+        zone: Optional[str] = None,
     ):
         self.finetune_data: str = finetune_data
         self.checkpoint_bucket: str = checkpoint_bucket
-        self.checkpoint_path: str = checkpoint_path
         self.checkpoint_store: str = checkpoint_store
         self.name: Optional[str] = name
         self.cloud: Optional[str] = cloud
@@ -82,18 +80,17 @@ class VicunaLauncher(Launcher):
         task = self.default_task
         task.name = self.name
         self.envs["MODEL_NAME"] = self.name
-        if "MODEL_SIZE" not in self.envs:
+        if "MODEL_BASE" not in self.envs:
             logging.warning(
-                f"envs.MODEL_SIZE not set, defaulting to {task.envs['MODEL_SIZE']}"
+                f"envs.MODEL_BASE not set, defaulting to {task.envs['MODEL_BASE']}"
             )
         if "WANDB_API_KEY" not in self.envs:
             logging.warning(f"envs.WANDB_API_KEY not set, skipping WandB logging")
         if "HF_TOKEN" not in self.envs:
-            logging.warning(
-                "No huggingface token provided. You will not be able to finetune starting from private or gated models"
+            raise ValueError(
+                "No huggingface access token provided. You will not be able to finetune starting from Llama2"
             )
         self.envs["MY_BUCKET"] = self.checkpoint_bucket
-        self.envs["BUCKET_PATH"] = self.checkpoint_path
         self.envs["BUCKET_TYPE"] = self.checkpoint_store
         task.update_envs(self.envs)
         task.update_file_mounts({"/data/mydata.json": self.finetune_data})
