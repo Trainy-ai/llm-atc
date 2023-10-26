@@ -34,6 +34,7 @@ setup: |
   pip install torch==2.0.1 --extra-index-url https://download.pytorch.org/whl/cu116
   git clone https://github.com/lm-sys/FastChat.git
   cd FastChat
+  git checkout cbf285360e8e809a316c88a8377c1bb0f0c770bc
   pip install -e .
   if [ $USE_FLASH_ATTN -eq 1 ]; then
     pip install packaging

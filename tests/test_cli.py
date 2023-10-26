@@ -105,7 +105,29 @@ def test_hf_serve():
             + """awk '{print $2}'); echo $ip; curl http://"$ip":8000/v1/models | grep vicuna""",
         ],
         f"sky stop -y {name} ; sleep 300 ; sky down --purge -y {name}",
-        timeout=45 * 60,
+        timeout=30 * 60,
+    )
+    run_one_test(test)
+
+
+@pytest.mark.cli
+def test_llmatc_serve():
+    """
+    Tests serving a llm-atc fine tuned model
+    """
+
+    name = "test_fine_tune"
+    ssh_config = os.path.expanduser("~/.ssh/config")
+    test = Test(
+        "serve_llmatc",
+        [
+            f"llm-atc serve --detach_run --name llm-atc --source s3://my-trainy-bucket/mymistral --accelerator V100:1 -c {name} --cloud aws --region us-east-2",
+            "sleep 300",
+            f"""ip=$(grep -A1 "Host {name}" {ssh_config} | grep "HostName" | """
+            + """awk '{print $2}'); echo $ip; curl http://"$ip":8000/v1/models | grep llm-atc""",
+        ],
+        f"sky stop -y {name} ; sleep 300 ; sky down --purge -y {name}",
+        timeout=30 * 60,
     )
     run_one_test(test)
 

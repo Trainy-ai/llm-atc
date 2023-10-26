@@ -8,12 +8,12 @@ Deployment
 ----------
 
 Model deployments are referenced by their HuggingFace modelhub name. Finetuned models trained through LLM-ATC are referenced
-by using the :code:`llm-atc/` prefix.
+by using the :code:`--name llm-atc`.
 
 .. code-block:: console
 
-    # serve an llm-atc finetuned model, requires `llm-atc/` prefix and grabs model checkpoint from object store
-    $ llm-atc serve --name llm-atc/myvicuna --source s3://my-bucket/my_vicuna/ --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
+    # serve an llm-atc finetuned model, requires source `llm-atc/` prefix and grabs model checkpoint from object store
+    $ llm-atc serve --name llm-atc --source s3://my-bucket/my_vicuna/ --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
 
     # serve a HuggingFace model, e.g. `lmsys/vicuna-13b-v1.3`
     $ llm-atc serve --name lmsys/vicuna-13b-v1.3 --accelerator A100:1 -c servecluster --cloud gcp --region asia-southeast1 --envs "HF_TOKEN=<HuggingFace_token>"
@@ -33,10 +33,19 @@ from your laptop.
 .. code-block:: console
 
     # get the ip address of the OpenAI API endpoint
-    $ ip=$(grep -A1 "Host servecluster" ~/.ssh/config | grep "HostName" | awk '{print $2}')
+    $ ip=$(sky status --ip servecluster)
 
     # test which models are available
     $ curl http://$ip:8000/v1/models
+
+    # chat completion
+    $ curl http://$ip:8000/v1/chat/completions \
+        -H "Content-Type: application/json" \
+        -d '{
+            "model": "my-model",
+            "messages": [{"role": "user", "content": "Hello! What is your name?"}]
+        }'
+
 
     # shutdown when done
     $ sky stop servecluster

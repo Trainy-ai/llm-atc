@@ -27,18 +27,6 @@ setup: |
 
   pip install git+https://github.com/huggingface/transformers.git
 
-  sudo apt update
-  sudo apt install -y rclone
-  # copy files from object store onto disk
-  if [[ $MODEL_NAME == llm-atc/* ]];
-  then
-    CHECKPOINT="/$MODEL_NAME/"
-    LOCAL_CHKPT="./$MODEL_NAME/"
-    mkdir -p $LOCAL_CHKPT
-    rclone sync --progress --exclude "train*" $CHECKPOINT $LOCAL_CHKPT
-  fi
-
-
 run: |
 
   master_addr=`echo "$SKYPILOT_NODE_IPS" | head -n1`

@@ -21,10 +21,6 @@ def serve_route(model_name: str, source: Optional[str] = None, **serve_kwargs):
         raise ValueError(
             "Attempting to use a finetuned model without a corresponding object store location"
         )
-    elif not source is None and not model_name.startswith("llm-atc/"):
-        logging.warning(
-            "Specified object store mount but model is not an llm-atc model. Skipping mounting."
-        )
     return Serve(model_name, source, **serve_kwargs).serve()
 
 
@@ -69,6 +65,10 @@ class Serve:
     def serve(self) -> sky.Task:
         """Deploy fastchat.serve.openai_api_server with vllm_worker"""
         serve_task = self.default_serve_task
+        if self.source and self.names == "llm-atc":
+            logging.info(f"Using a fine tuned model at {self.source}")
+            serve_task.update_file_mounts({"/llm-atc": self.source})
+            self.names = "/llm-atc"
         self.envs["MODEL_NAME"] = self.names
         if "HF_TOKEN" not in self.envs:
             logging.warning(
@@ -80,6 +80,4 @@ class Serve:
         resource._cloud = sky.clouds.CLOUD_REGISTRY.from_str(self.cloud)
         resource._set_region_zone(self.region, self.zone)
         serve_task.set_resources(resource)
-        if self.source and self.names.startswith("llm-atc/"):
-            serve_task.update_file_mounts({"/" + self.names: self.source})
         return serve_task

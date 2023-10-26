@@ -17,6 +17,7 @@ jobs:
         python-version: ["3.10"]
         test-path:
           - tests/test_cli.py::test_hf_serve
+          - tests/test_cli.py::test_llmatc_serve
           - tests/test_launch.py
           - tests/test_runtracker.py
           - tests/test_serve.py
@@ -52,4 +53,5 @@ jobs:
           name: error-log
           path: |
             /tmp/serve_huggingface-*.log
+            /tmp/serve_llmatc-*.log
             /home/runner/sky_logs/sky-*/*.log
