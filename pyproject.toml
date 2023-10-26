@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llm_atc"
-version = "0.1.4"
+version = "0.1.5"
 description = "Tools for fine tuning and serving LLMs"
 authors = ["Andrew Aikawa <asai@berkeley.edu>"]
 readme = "README.md"
@@ -11,6 +11,7 @@ omegaconf = "^2.3.0"
 posthog = "^3.0.1"
 prettytable = "^3.8.0"
 click = "^8.1.6"
+skypilot = "^0.4.0"
 
 [tool.poetry.scripts]
 llm-atc = "llm_atc.cli:cli"

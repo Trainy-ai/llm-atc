@@ -9,14 +9,11 @@ We recommend installing LLM-ATC and the `Skypilot dependency <https://skypilot.r
     $ conda create -n "sky" python=3.10 
     $ conda activate sky
 
-    # For Macs, macOS >= 10.15 is required to install SkyPilot. For Apple Silicon-based devices (e.g. Apple M1)
-    $ pip uninstall grpcio; conda install -c conda-forge grpcio=1.43.0 --force-reinstall
-
-    # install the skypilot cli and dependency, for the clouds you want, e.g. AWS, GCP
-    $ pip install "skypilot[aws,gcp] @ git+https://github.com/skypilot-org/skypilot.git"
-
     # install llm-atc
     $ pip install llm-atc
+
+    # For Macs, macOS >= 10.15 has a conflict with grpcio
+    $ pip uninstall grpcio; conda install -c conda-forge grpcio=1.43.0 --force-reinstall
 
 
 Installation from Source

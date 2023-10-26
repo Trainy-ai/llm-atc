@@ -16,15 +16,14 @@ Follow the instructions here [to install Skypilot and provide cloud credentials]
 
 ```bash
 # create a fresh environment
-conda create -n "sky" python=3.10
+conda create -n "sky" python=3.10 
 conda activate sky
 
-# For Macs, macOS >= 10.15 is required to install SkyPilot. For Apple Silicon-based devices (e.g. Apple M1)
+# install llm-atc
+pip install llm-atc
+
+# For Macs, macOS >= 10.15 has a conflict with grpcio
 pip uninstall grpcio; conda install -c conda-forge grpcio=1.43.0 --force-reinstall
-
-# install the skypilot cli and dependency, for the clouds you want, e.g. GCP
-pip install "skypilot[gcp] @ git+https://github.com/skypilot-org/skypilot.git" # for aws, skypilot[aws]
-
 
 # Configure your cloud credentials. This is a GCP example. See https://skypilot.readthedocs.io/en/latest/getting-started/ installation.html for examples with other cloud providers.
 pip install google-api-python-client

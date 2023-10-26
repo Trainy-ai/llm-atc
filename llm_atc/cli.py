@@ -62,12 +62,6 @@ def cli():
     "--checkpoint_bucket", type=str, required=True, help="object store bucket name"
 )
 @click.option(
-    "--checkpoint_path",
-    type=str,
-    required=True,
-    help="object store path for fine tuned checkpoints, e.g. ~/datasets",
-)
-@click.option(
     "--checkpoint_store",
     type=str,
     required=True,
@@ -94,6 +88,10 @@ def cli():
     type=str,
     help="Environment variables for run. Usage `llm-atc train ... --envs 'MODEL_SIZE=7 USE_FLASH_ATTN=0 WANDB_API_KEY=<mywanbd_key>'`",
 )
+@click.option(
+    "--region", type=str, help="which region to train in. Defaults to any region"
+)
+@click.option("--zone", type=str, help="which zone to train in. Defaults to any zone")
 @click.option("--accelerator", type=str, help="Which GPU type to use", required=True)
 @click.option(
     "--detach_setup",
@@ -116,13 +114,14 @@ def train(
     model_type: str,
     finetune_data: str,
     checkpoint_bucket: str,
-    checkpoint_path: str,
     checkpoint_store: Optional[str],
     name: str,
     description: str,
     cluster: Optional[str],
     cloud: Optional[str],
     envs: Optional[str],
+    region: Optional[str],
+    zone: Optional[str],
     accelerator: Optional[str],
     detach_setup: Optional[bool],
     detach_run: Optional[bool],
@@ -139,13 +138,14 @@ def train(
     task = train_task(
         model_type,
         checkpoint_bucket=checkpoint_bucket,
-        checkpoint_path=checkpoint_path,
         checkpoint_store=checkpoint_store,
         finetune_data=finetune_data,
         name=name,
         cloud=cloud,
         accelerator=accelerator,
         envs=envs,
+        region=region,
+        zone=zone,
     )
     RunTracker.add_run(model_type, name, description, task)
     sky.launch(
