@@ -116,7 +116,7 @@ def test_llmatc_serve():
     Tests serving a llm-atc fine tuned model
     """
 
-    name = "test_fine_tune"
+    name = "testfinetune"
     ssh_config = os.path.expanduser("~/.ssh/config")
     test = Test(
         "serve_llmatc",
