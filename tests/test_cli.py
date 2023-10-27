@@ -121,7 +121,7 @@ def test_llmatc_serve():
     test = Test(
         "serve_llmatc",
         [
-            f"llm-atc serve --detach_run --name llm-atc --source s3://my-trainy-bucket/mymistral --accelerator V100:1 -c {name} --cloud aws --region us-east-2",
+            f"llm-atc serve --detach_run --name llm-atc --source s3://my-trainy-bucket/mymistral --accelerator A100:1 -c {name} --cloud aws --region us-east-2",
             "sleep 300",
             f"""ip=$(grep -A1 "Host {name}" {ssh_config} | grep "HostName" | """
             + """awk '{print $2}'); echo $ip; curl http://"$ip":8000/v1/models | grep llm-atc""",
