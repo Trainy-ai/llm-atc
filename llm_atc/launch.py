@@ -100,6 +100,6 @@ class VicunaLauncher(Launcher):
         resource = list(task.get_resources())[0]
         resource._set_accelerators(self.accelerator, None)
         resource._cloud = sky.clouds.CLOUD_REGISTRY.from_str(self.cloud)
-        resource._set_region_zone(self.region, self.zone)
+        resource._validate_and_set_region_zone(self.region, self.zone)
         task.set_resources(resource)
         return task

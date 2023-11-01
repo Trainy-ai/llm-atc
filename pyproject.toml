@@ -11,7 +11,7 @@ omegaconf = "^2.3.0"
 posthog = "^3.0.1"
 prettytable = "^3.8.0"
 click = "^8.1.6"
-skypilot = "^0.4.0"
+skypilot = "^0.4.1"
 
 [tool.poetry.scripts]
 llm-atc = "llm_atc.cli:cli"
