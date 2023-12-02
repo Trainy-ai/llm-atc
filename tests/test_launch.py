@@ -13,7 +13,7 @@ def test_train():
         cloud="aws",
         region="us-east-2",
         accelerator="A100:8",
-        envs="HF_TOKEN=huggingFaceToken",
+        envs=[("HF_TOKEN", "huggingFaceToken")],
     )
     assert task.name == "myvicuna"
     assert task.envs["MODEL_NAME"] == "myvicuna"

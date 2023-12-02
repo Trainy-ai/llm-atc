@@ -7,7 +7,7 @@ def test_serve():
     serve_task = serve_route(
         "lmsys/vicuna-7b-1.3",
         accelerator="V100:1",
-        envs="HF_TOKEN=mytoken",
+        envs=[("HF_TOKEN", "mytoken")],
         cloud="aws",
         region="us-east-2",
     )
