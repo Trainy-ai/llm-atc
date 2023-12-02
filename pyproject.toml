@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llm_atc"
-version = "0.1.6"
+version = "0.1.7"
 description = "Tools for fine tuning and serving LLMs"
 authors = ["Andrew Aikawa <asai@berkeley.edu>"]
 readme = "README.md"

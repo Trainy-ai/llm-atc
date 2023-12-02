@@ -5,7 +5,7 @@ import sky
 from sky.data.storage import Storage
 
 from omegaconf import OmegaConf
-from typing import Any, Dict, Optional
+from typing import Dict, List, Optional, Tuple
 
 
 SUPPORTED_MODELS = ("vicuna",)
@@ -45,7 +45,7 @@ class Launcher:
         name: Optional[str] = None,
         cloud: Optional[str] = None,
         accelerator: Optional[str] = None,
-        envs: Optional[str] = "",
+        envs: Optional[List[Tuple[str, str]]] = [],
         region: Optional[str] = None,
         zone: Optional[str] = None,
     ):
@@ -57,11 +57,9 @@ class Launcher:
         self.region: Optional[str] = region
         self.zone: Optional[str] = zone
         self.accelerator: Optional[str] = accelerator
-        self.envs: Dict[Any, Any] = (
-            OmegaConf.to_container(OmegaConf.from_dotlist(envs.split()), resolve=True)
-            if envs
-            else {}
-        )
+        self.envs: Dict[str, str] = {}
+        for k, v in envs:
+            self.envs[k] = v
 
 
 class VicunaLauncher(Launcher):

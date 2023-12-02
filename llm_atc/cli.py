@@ -28,7 +28,7 @@ from llm_atc.launch import train_task, SUPPORTED_MODELS
 from llm_atc.run import RunTracker
 from llm_atc.serve import serve_route
 from posthog import Posthog
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 hostname = socket.gethostname()
 
@@ -38,6 +38,21 @@ posthog = Posthog(
 )
 
 disable_telemetry = os.environ.get("LLM_ATC_DISABLE", "0") == "1"
+
+
+def _parse_env_var(env_var: str) -> Tuple[str, str]:
+    """Parse env vars into a (KEY, VAL) pair."""
+    if "=" not in env_var:
+        value = os.environ.get(env_var)
+        if value is None:
+            raise click.UsageError(f"{env_var} is not set in local environment.")
+        return (env_var, value)
+    ret = tuple(env_var.split("=", 1))
+    if len(ret) != 2:
+        raise click.UsageError(
+            f"Invalid env var: {env_var}. Must be in the form of KEY=VAL " "or KEY."
+        )
+    return ret[0], ret[1]
 
 
 @click.group()
@@ -85,8 +100,23 @@ def cli():
 )
 @click.option(
     "--envs",
-    type=str,
-    help="Environment variables for run. Usage `llm-atc train ... --envs 'MODEL_SIZE=7 USE_FLASH_ATTN=0 WANDB_API_KEY=<mywanbd_key>'`",
+    required=False,
+    type=_parse_env_var,
+    multiple=True,
+    help="""\
+    Environment variable to set on the remote node.
+    It can be specified multiple times.
+    Examples:
+
+    \b
+    1. ``--envs MY_ENV=1``: set ``$MY_ENV`` on the cluster to be 1.
+
+    2. ``--envs MY_ENV2=$HOME``: set ``$MY_ENV2`` on the cluster to be the
+    same value of ``$HOME`` in the local environment where the CLI command
+    is run.
+
+    3. ``--envs MY_ENV3``: set ``$MY_ENV3`` on the cluster to be the
+    same value of ``$MY_ENV3`` in the local environment.""",
 )
 @click.option(
     "--region", type=str, help="which region to train in. Defaults to any region"
@@ -119,7 +149,7 @@ def train(
     description: str,
     cluster: Optional[str],
     cloud: Optional[str],
-    envs: Optional[str],
+    envs: Optional[List[Tuple[str, str]]],
     region: Optional[str],
     zone: Optional[str],
     accelerator: Optional[str],
@@ -172,7 +202,23 @@ def train(
 @click.option(
     "-e",
     "--envs",
-    help="environment variables for this serve deployment. i.e. `HF_TOKEN='<huggingface_token>'`",
+    required=False,
+    type=_parse_env_var,
+    multiple=True,
+    help="""\
+    Environment variable to set on the remote node.
+    It can be specified multiple times.
+    Examples:
+
+    \b
+    1. ``--envs MY_ENV=1``: set ``$MY_ENV`` on the cluster to be 1.
+
+    2. ``--envs MY_ENV2=$HOME``: set ``$MY_ENV2`` on the cluster to be the
+    same value of ``$HOME`` in the local environment where the CLI command
+    is run.
+
+    3. ``--envs MY_ENV3``: set ``$MY_ENV3`` on the cluster to be the
+    same value of ``$MY_ENV3`` in the local environment.""",
 )
 @click.option(
     "--accelerator",
@@ -213,7 +259,7 @@ def serve(
     name: str,
     source: Optional[str],
     accelerator: Optional[str],
-    envs: Optional[str],
+    envs: Optional[List[Tuple[str, str]]],
     cluster: Optional[str],
     cloud: Optional[str],
     region: Optional[str],
